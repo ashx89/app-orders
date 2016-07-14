@@ -9,5 +9,6 @@ global.__payment_base = __dirname;
 app.get('/cards', require('./components/cards/fetch'));
 app.get('/cards/:id', require('./components/cards/fetch'));
 app.post('/cards', require('./components/cards/create'));
+app.delete('/cards/:id', require('./components/cards/delete'));
 
 module.exports = app;
