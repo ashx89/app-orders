@@ -1,5 +1,5 @@
-var Account = require(__base + '/app/models/account');
-var cardsApi = require(__payment_base + '/lib/cards');
+var Account = require(global.__base + '/app/models/account');
+var cardsApi = require(global.__payment_base + '/lib/cards');
 
 /**
  * Remove a card
