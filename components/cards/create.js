@@ -1,4 +1,4 @@
-var Account = require(global.__base + '/app/models/account');
+var Account = require('app-accounts').model;
 var cardsApi = require(global.__payment_base + '/lib/cards');
 
 /**

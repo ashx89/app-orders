@@ -9,6 +9,7 @@
   "author": "Ashley J. Taylor",
   "license": "ISC",
   "dependencies": {
+    "app-accounts": "git+https://github.com/ashx89/app-accounts.git",
     "async": "^2.0.0",
     "stripe": "^4.7.0",
     "underscore": "^1.8.3"
