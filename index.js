@@ -1,8 +1,13 @@
-global.__payment_base = __dirname;
+global.__order_base = __dirname;
 
-var mongoose = require('mongoose');
 var express = require('express');
 var app = express();
+
+/**
+ * Rest:: Orders
+ */
+app.get('/orders', require('./components/orders/fetch'));
+// app.post('/orders', require('./components/orders/create'));
 
 /**
  * Rest:: Card
@@ -18,4 +23,7 @@ app.delete('/cards/:id', require('./components/cards/delete'));
 app.get('/customers', require('./components/customers/fetch'));
 app.post('/customers', require('./components/customers/create'));
 
-module.exports = app;
+module.exports = {
+	app: app,
+	model: require('./models/order')
+};

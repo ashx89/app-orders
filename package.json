@@ -11,6 +11,8 @@
   "dependencies": {
     "app-accounts": "git+https://github.com/ashx89/app-accounts.git",
     "async": "^2.0.0",
+    "mongoose": "^4.5.5",
+    "mongoose-validator": "^1.2.5",
     "stripe": "^4.7.0",
     "underscore": "^1.8.3"
   }

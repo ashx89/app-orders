@@ -1,5 +1,5 @@
 var Account = require(__base + '/manager').AccountModel;
-var cardsApi = require(global.__payment_base + '/lib/cards');
+var cardsApi = require(global.__order_base + '/lib/cards');
 
 /**
  * Fetch a card
