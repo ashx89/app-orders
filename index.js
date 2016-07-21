@@ -7,7 +7,7 @@ var app = express();
  * Rest:: Orders
  */
 app.get('/orders', require('./components/orders/fetch'));
-// app.post('/orders', require('./components/orders/create'));
+app.get('/orders/:id', require('./components/orders/fetch'));
 
 /**
  * Rest:: Card
