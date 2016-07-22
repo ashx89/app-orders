@@ -1,5 +1,5 @@
 var Account = require(__base + '/manager').AccountModel;
-var customersApi = require(global.__order_base + '/lib/customers');
+var customersApi = require(global.__orders_base + '/lib/customers');
 
 /**
  * Fetch customer details

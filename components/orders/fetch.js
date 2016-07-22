@@ -3,7 +3,7 @@ var _ = require('underscore');
 /**
  * Model
  */
-var Order = require(global.__order_base + '/models/order');
+var Order = require(global.__orders_base + '/models/order');
 
 /**
  * Fetch a meal

@@ -1,4 +1,4 @@
-global.__order_base = __dirname;
+global.__orders_base = __dirname;
 
 var express = require('express');
 var app = express();
