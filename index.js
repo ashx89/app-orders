@@ -4,6 +4,12 @@ var express = require('express');
 var app = express();
 
 /**
+ * Rest:: Basket
+ */
+app.post('/basket', require('./lib/basket').update);
+app.delete('/basket', require('./lib/basket').delete);
+
+/**
  * Rest:: Orders
  */
 app.get('/orders', require('./components/orders/fetch'));

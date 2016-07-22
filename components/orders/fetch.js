@@ -13,8 +13,8 @@ var fetch = function onFetch(req, res, next) {
 
 	var query = { user: req.user._id };
 
-	if (id) query = _.extend(query, {_id: id});
-	
+	if (id) query = _.extend(query, { _id: id });
+
 	Order.find(query, function onFind(err, doc) {
 		if (err) return next(err);
 		if (!doc || !doc.length) return next(new Error('No orders have been made'));
