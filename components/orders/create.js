@@ -25,6 +25,7 @@ var create = function onCreate(req, res, next) {
 
 				order.customer = account.customer;
 				order.currency = account.currency;
+				order.shipping_address = req.body.address || account.address;
 
 				return callback(null, order);
 			});
@@ -35,12 +36,6 @@ var create = function onCreate(req, res, next) {
 					if (err) return callback(err);
 
 					order.customer = customer.id;
-					order.shipping_address = {
-						line1: customer.sources.data[0].address_line1,
-						line2: customer.sources.data[0].address_line2,
-						city: customer.sources.data[0].address_city,
-						zipcode: customer.sources.data[0].address_zip
-					};
 				});
 			}
 			return callback(null, order);
