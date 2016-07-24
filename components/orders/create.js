@@ -10,12 +10,12 @@ var customersApi = require(global.__orders_base + '/lib/customers');
  * Create and order
  */
 var create = function onCreate(req, res, next) {
-	var order = req.body;
+	var order = {
+		items: [],
+		metadata: {},
+	};
 
-	order.items = [];
-
-	order.metadata = {};
-	order.metadata.note = req.body.note;
+	order.metadata.note = req.body.note || '';
 	order.metadata.user = req.user._id;
 	order.metadata.name = req.user.fullname;
 
