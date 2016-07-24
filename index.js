@@ -14,6 +14,7 @@ app.delete('/basket', require('./lib/basket').delete);
  */
 app.get('/orders', require('./components/orders/fetch'));
 app.get('/orders/:id', require('./components/orders/fetch'));
+app.post('/orders', require('./components/orders/create'));
 
 /**
  * Rest:: Card
