@@ -68,7 +68,7 @@ var create = function onCreate(req, res, next) {
 			});
 		},
 		function getSupplierUserDetails(order, callback) {
-			User.findOne({ _id: order.supplier.user }, function onSupplierUserFind(err, user) {
+			User.findOne({ _id: order.metadata.supplier.user }, function onSupplierUserFind(err, user) {
 				if (err) return callback(err);
 
 				order.metadata.supplier.name = user.fullname;
@@ -95,7 +95,7 @@ var create = function onCreate(req, res, next) {
 							return done(null, product.price);
 						});
 					});
-				})(order.items[i]);
+				})(req.body.items[i]);
 			}
 
 			if (!tasks.length) return callback(new Error('No items added to order'));
