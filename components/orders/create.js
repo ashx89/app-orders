@@ -31,14 +31,15 @@ var create = function onCreate(req, res, next) {
 			});
 		},
 		function createCustomerAccount(order, callback) {
-			if (!order.customer) {
-				customersApi.create(req.user, function onCreate(err, customer) {
-					if (err) return callback(err);
+			if (order.customer) return callback(null, order);
 
-					order.customer = customer.id;
-				});
-			}
-			return callback(null, order);
+			customersApi.create(req.user, function onCreate(err, customer) {
+				if (err) return callback(err);
+
+				order.customer = customer.id;
+
+				return callback(null, order);
+			});
 		},
 		function getSupplierAccountDetails(order, callback) {
 			Account.findOne({ _id: req.body.supplierId }, function onSupplierAccountFind(err, account) {
