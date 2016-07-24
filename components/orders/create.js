@@ -23,6 +23,7 @@ var create = function onCreate(req, res, next) {
 			Account.findOne({ user: req.user._id }, function onFind(err, account) {
 				if (err) return callback(err);
 
+				order.account = account;
 				order.customer = account.customer;
 				order.currency = account.currency;
 				order.shipping_address = req.body.address || account.address;
@@ -37,8 +38,15 @@ var create = function onCreate(req, res, next) {
 				if (err) return callback(err);
 
 				order.customer = customer.id;
+				order.account.customer = customer.id;
 
-				return callback(null, order);
+				order.account.save(function onAccountSave(err) {
+					if (err) return callback(err);
+
+					delete order.account;
+
+					return callback(null, order);
+				});
 			});
 		},
 		function getSupplierAccountDetails(order, callback) {
