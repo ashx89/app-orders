@@ -30,6 +30,7 @@ var orderSchema = new mongoose.Schema({
 		required: [true, 'Missing Order Status']
 	},
 	supplier: {
+		user: { type: mongoose.Schema.Types.ObjectId },
 		account: { type: mongoose.Schema.Types.ObjectId },
 		storename: String,
 		name: String,
