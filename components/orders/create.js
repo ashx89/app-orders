@@ -12,6 +12,9 @@ var customersApi = require(global.__orders_base + '/lib/customers');
  * Create and order
  */
 var create = function onCreate(req, res, next) {
+	if (!req.body.supplierId) return next(new Error('Missing Supplier ID'));
+	if (!req.body.items.length) return next(new Error('No items added to order'));
+
 	var order = {
 		items: [],
 		shipping: {},
