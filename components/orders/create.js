@@ -15,6 +15,7 @@ var create = function onCreate(req, res, next) {
 	order.items = [];
 
 	order.metadata = {};
+	order.metadata.note = req.body.note;
 	order.metadata.user = req.user._id;
 	order.metadata.name = req.user.fullname;
 
