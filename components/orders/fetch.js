@@ -1,21 +1,25 @@
-var Account = require(global.__base + '/manager').AccountModel;
-var ordersApi = require(global.__orders_base + '/lib/orders');
+var _ = require('underscore');
 
 /**
- * Fetch an order
+ * Model
+ */
+var Order = require(global.__orders_base + '/models/order');
+
+/**
+ * Fetch a meal
  */
 var fetch = function onFetch(req, res, next) {
-	var orderId = req.params.id;
+	var id = req.params.id;
 
-	function onFetchOrders(err, orders) {
-		if (err) return next(err);
-		if (!orders) return res.status(200).json(orders.data);
-		return (orders.data) ? res.status(200).json(orders.data) : res.status(200).json(orders);
-	}
+	var query = { user: req.user._id };
 
-	Account.findOne({ user: req.user._id }, function onFind(err, account) {
+	if (id) query = _.extend(query, { _id: id });
+
+	Order.find(query, function onFind(err, doc) {
 		if (err) return next(err);
-		(orderId) ? ordersApi.fetch(orderId, onFetchOrders) : ordersApi.fetch({ customer: account.customer }, onFetchOrders);
+		if (!doc || !doc.length) return next(new Error('No orders have been made'));
+
+		return (doc.length === 1) ? res.status(200).json(doc[0]) : res.status(200).json(doc);
 	});
 };
 

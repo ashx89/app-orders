@@ -1,21 +1,32 @@
+var _ = require('underscore');
 var async = require('async');
 
 var User = require(global.__base + '/manager').UserModel;
 var Account = require(global.__base + '/manager').AccountModel;
 var Product = require(global.__base + '/manager').ProductModel;
 
-var Order = require(global.__orders_base + '/models/order');
-
+var ordersApi = require(global.__orders_base + '/lib/orders');
 var customersApi = require(global.__orders_base + '/lib/customers');
 
 /**
- * Create an order item
+ * Create and order
  */
 var create = function onCreate(req, res, next) {
-	var order = new Order(req.body);
+	if (!req.body.supplierId) return next(new Error('Missing Supplier ID'));
+	if (!req.body.items.length) return next(new Error('No items added to order'));
 
-	order.user = req.user._id;
-	order.name = req.user.fullname;
+	var order = {
+		items: [],
+		shipping: {},
+		metadata: {
+			supplier: {}
+		}
+	};
+
+	order.metadata.note = req.body.note || '';
+	order.metadata.user = req.user._id;
+	order.metadata.name = req.user.fullname;
+
 	order.email = req.user.email;
 
 	async.waterfall([
@@ -23,9 +34,12 @@ var create = function onCreate(req, res, next) {
 			Account.findOne({ user: req.user._id }, function onFind(err, account) {
 				if (err) return callback(err);
 
+				order.shipping.name = req.body.name || req.user.fullname;
+				order.shipping.address = req.body.address ||
+					_.pick(account.address, 'line1', 'line2', 'city', 'zipcode', 'postal_code', 'country');
+
 				order.customer = account.customer;
-				order.currency = account.currency;
-				order.shipping_address = req.body.address || account.address;
+				order.currency = account.currency || 'gbp';
 
 				return callback(null, order);
 			});
@@ -51,20 +65,20 @@ var create = function onCreate(req, res, next) {
 			Account.findOne({ _id: req.body.supplierId }, function onSupplierAccountFind(err, account) {
 				if (err) return callback(err);
 
-				order.supplier.user = account.user;
-				order.supplier.account = account._id;
-				order.supplier.address = account.address;
-				order.supplier.storename = account.storename || undefined;
+				order.metadata.supplier.user = account.user;
+				order.metadata.supplier.account = account._id;
+				order.metadata.supplier.address = account.address;
+				order.metadata.supplier.storename = account.storename || undefined;
 
 				return callback(null, order);
 			});
 		},
 		function getSupplierUserDetails(order, callback) {
-			User.findOne({ _id: order.supplier.user }, function onSupplierUserFind(err, user) {
+			User.findOne({ _id: order.metadata.supplier.user }, function onSupplierUserFind(err, user) {
 				if (err) return callback(err);
 
-				order.supplier.name = user.fullname;
-				order.supplier.email = user.email;
+				order.metadata.supplier.name = user.fullname;
+				order.metadata.supplier.email = user.email;
 
 				return callback(null, order);
 			});
@@ -72,15 +86,22 @@ var create = function onCreate(req, res, next) {
 		function calculateTotalPrice(order, callback) {
 			var tasks = [];
 
-			for (var i = 0; i < order.items.length; ++i) {
+			for (var i = 0; i < req.body.items.length; ++i) {
 				(function loopEachOrderItem(item) {
 					tasks.push(function onEachProductFetch(done) {
 						Product.findOne({ _id: item._id }, function onProductFind(err, product) {
 							if (err) return done(err);
+
+							order.items.push({
+								amount: product.price,
+								currency: order.currency,
+								description: product.title
+							});
+
 							return done(null, product.price);
 						});
 					});
-				})(order.items[i]);
+				})(req.body.items[i]);
 			}
 
 			if (!tasks.length) return callback(new Error('No items added to order'));
@@ -100,9 +121,9 @@ var create = function onCreate(req, res, next) {
 	], function onComplete(err, order) {
 		if (err) return next(err);
 
-		order.save(function onOrderSave(err) {
+		ordersApi.create(order, function onOrderCreate(err, result) {
 			if (err) return next(err);
-			return res.status(200).json(order);
+			return res.status(200).json(result);
 		});
 	});
 };
