@@ -23,7 +23,6 @@ var create = function onCreate(req, res, next) {
 			Account.findOne({ user: req.user._id }, function onFind(err, account) {
 				if (err) return callback(err);
 
-				order.account = account;
 				order.customer = account.customer;
 				order.currency = account.currency;
 				order.shipping_address = req.body.address || account.address;
@@ -38,15 +37,14 @@ var create = function onCreate(req, res, next) {
 				if (err) return callback(err);
 
 				order.customer = customer.id;
-				order.account.customer = customer.id;
 
-				order.account.save(function onAccountSave(err) {
-					if (err) return callback(err);
-
-					delete order.account;
-
-					return callback(null, order);
-				});
+				Account.update(
+					{ user: req.user._id },
+					{ $set: { customer: customer.id } },
+					function onUpdateAccount(err, updatedAccount) {
+						if (err) return callback(err);
+						return callback(null, order);
+					});
 			});
 		},
 		function getSupplierAccountDetails(order, callback) {
@@ -101,8 +99,6 @@ var create = function onCreate(req, res, next) {
 		}
 	], function onComplete(err, order) {
 		if (err) return next(err);
-
-		console.log(order);
 
 		order.save(function onOrderSave(err) {
 			if (err) return next(err);
