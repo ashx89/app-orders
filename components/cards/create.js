@@ -1,4 +1,4 @@
-var Account = require(__base + '/manager').AccountModel;
+var Account = require(global.__base + '/manager').AccountModel;
 var cardsApi = require(global.__orders_base + '/lib/cards');
 
 /**
