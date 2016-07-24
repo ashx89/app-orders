@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var async = require('async');
 
 var User = require(global.__base + '/manager').UserModel;
@@ -6,12 +7,14 @@ var Product = require(global.__base + '/manager').ProductModel;
 
 var ordersApi = require(global.__orders_base + '/lib/orders');
 var customersApi = require(global.__orders_base + '/lib/customers');
+
 /**
  * Create and order
  */
 var create = function onCreate(req, res, next) {
 	var order = {
 		items: [],
+		shipping: {},
 		metadata: {
 			supplier: {}
 		}
@@ -28,9 +31,9 @@ var create = function onCreate(req, res, next) {
 			Account.findOne({ user: req.user._id }, function onFind(err, account) {
 				if (err) return callback(err);
 
-				order.shipping = {};
 				order.shipping.name = req.body.name || req.user.fullname;
-				order.shipping.address = req.body.address || account.address;
+				order.shipping.address = req.body.address ||
+					_.pick(account.address, 'line1', 'line2', 'city', 'zipcode', 'postal_code', 'country');
 
 				order.customer = account.customer;
 				order.currency = account.currency || 'gbp';
@@ -115,9 +118,9 @@ var create = function onCreate(req, res, next) {
 	], function onComplete(err, order) {
 		if (err) return next(err);
 
-		ordersApi.create(order, function onOrderCreate(err, order) {
+		ordersApi.create(order, function onOrderCreate(err, result) {
 			if (err) return next(err);
-			return res.status(200).json(order);
+			return res.status(200).json(result);
 		});
 	});
 };
