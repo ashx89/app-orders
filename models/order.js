@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var validator = require('mongoose-validator');
+var validator = require('mongoose-validators');
 
 var orderSchema = new mongoose.Schema({
 	user: { type: mongoose.Schema.Types.ObjectId },
