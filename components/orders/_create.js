@@ -4,20 +4,18 @@ var User = require(global.__base + '/manager').UserModel;
 var Account = require(global.__base + '/manager').AccountModel;
 var Product = require(global.__base + '/manager').ProductModel;
 
-var ordersApi = require(global.__orders_base + '/lib/orders');
+var Order = require(global.__orders_base + '/models/order');
+
 var customersApi = require(global.__orders_base + '/lib/customers');
+
 /**
- * Create and order
+ * Create an order item
  */
 var create = function onCreate(req, res, next) {
-	var order = req.body;
+	var order = new Order(req.body);
 
-	order.items = [];
-
-	order.metadata = {};
-	order.metadata.user = req.user._id;
-	order.metadata.name = req.user.fullname;
-
+	order.user = req.user._id;
+	order.name = req.user.fullname;
 	order.email = req.user.email;
 
 	async.waterfall([
@@ -25,12 +23,9 @@ var create = function onCreate(req, res, next) {
 			Account.findOne({ user: req.user._id }, function onFind(err, account) {
 				if (err) return callback(err);
 
-				order.shipping = {};
-				order.shipping.name = req.body.name || req.user.fullname;
-				order.shipping.address = req.body.address || account.address;
-
 				order.customer = account.customer;
 				order.currency = account.currency;
+				order.shipping_address = req.body.address || account.address;
 
 				return callback(null, order);
 			});
@@ -56,10 +51,10 @@ var create = function onCreate(req, res, next) {
 			Account.findOne({ _id: req.body.supplierId }, function onSupplierAccountFind(err, account) {
 				if (err) return callback(err);
 
-				order.metadata.supplier.user = account.user;
-				order.metadata.supplier.account = account._id;
-				order.metadata.supplier.address = account.address;
-				order.metadata.supplier.storename = account.storename || undefined;
+				order.supplier.user = account.user;
+				order.supplier.account = account._id;
+				order.supplier.address = account.address;
+				order.supplier.storename = account.storename || undefined;
 
 				return callback(null, order);
 			});
@@ -68,8 +63,8 @@ var create = function onCreate(req, res, next) {
 			User.findOne({ _id: order.supplier.user }, function onSupplierUserFind(err, user) {
 				if (err) return callback(err);
 
-				order.metadata.supplier.name = user.fullname;
-				order.metadata.supplier.email = user.email;
+				order.supplier.name = user.fullname;
+				order.supplier.email = user.email;
 
 				return callback(null, order);
 			});
@@ -77,18 +72,11 @@ var create = function onCreate(req, res, next) {
 		function calculateTotalPrice(order, callback) {
 			var tasks = [];
 
-			for (var i = 0; i < req.body.items.length; ++i) {
+			for (var i = 0; i < order.items.length; ++i) {
 				(function loopEachOrderItem(item) {
 					tasks.push(function onEachProductFetch(done) {
 						Product.findOne({ _id: item._id }, function onProductFind(err, product) {
 							if (err) return done(err);
-
-							order.items.push({
-								amount: product.price,
-								currency: order.currency,
-								description: product.title
-							});
-
 							return done(null, product.price);
 						});
 					});
@@ -112,7 +100,7 @@ var create = function onCreate(req, res, next) {
 	], function onComplete(err, order) {
 		if (err) return next(err);
 
-		ordersApi.create(order, function onOrderCreate(err, order) {
+		order.save(function onOrderSave(err) {
 			if (err) return next(err);
 			return res.status(200).json(order);
 		});
