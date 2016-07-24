@@ -33,7 +33,7 @@ var create = function onCreate(req, res, next) {
 				order.shipping.address = req.body.address || account.address;
 
 				order.customer = account.customer;
-				order.currency = account.currency;
+				order.currency = account.currency || 'gbp';
 
 				return callback(null, order);
 			});
