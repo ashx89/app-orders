@@ -15,7 +15,7 @@ var fetch = function onFetch(req, res, next) {
 
 	Account.findOne({ user: req.user._id }, function onFind(err, account) {
 		if (err) return next(err);
-		(orderId) ? ordersApi.fetch(orderId, onFetchOrders) : ordersApi.fetchAll({ customer: account.customer }, onFetchOrders);
+		(orderId) ? ordersApi.fetch(orderId, onFetchOrders) : ordersApi.fetch({ customer: account.customer }, onFetchOrders);
 	});
 };
 
