@@ -12,7 +12,9 @@ var customersApi = require(global.__orders_base + '/lib/customers');
 var create = function onCreate(req, res, next) {
 	var order = {
 		items: [],
-		metadata: {},
+		metadata: {
+			supplier: {}
+		}
 	};
 
 	order.metadata.note = req.body.note || '';
