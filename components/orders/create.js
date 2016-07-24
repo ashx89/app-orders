@@ -24,7 +24,7 @@ var create = function onCreate(req, res, next) {
 				if (err) return callback(err);
 
 				order.customer = account.customer;
-				order.currency = account.currency || 'gbp';
+				order.currency = account.currency;
 				order.shipping_address = req.body.address || account.address;
 
 				return callback(null, order);
