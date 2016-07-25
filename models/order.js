@@ -19,6 +19,9 @@ var orderSchema = new mongoose.Schema({
 		type: String,
 		required: [true, 'Missing Order Customer ID']
 	},
+	charge: {
+		type: String
+	},
 	amount: {
 		type: Number,
 		default: 0,
