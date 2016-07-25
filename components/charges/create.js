@@ -36,17 +36,17 @@ var create = function onCreate(req, res, next) {
 
 			return callback(null, order);
 		},
-		function saveCardDetailsToUser(order, chargeResult, callback) {
+		function saveCardDetailsToUser(order, callback) {
 			if (charge.source) {
 				customersApi.update(order.customer, { source: charge.source }, function onUpdate(err, customerObject) {
 					if (err) return callback(err);
-					return callback(null, order, chargeResult);
+					return callback(null, order);
 				});
 			} else {
-				return callback(null, order, chargeResult);
+				return callback(null, order);
 			}
 		},
-		function payOrder(order, chargeResult, callback) {
+		function payOrder(order, callback) {
 			chargesApi.create(charge, function onCreate(err, chargeResult) {
 				if (err) return callback(err);
 
