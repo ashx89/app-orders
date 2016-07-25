@@ -15,7 +15,7 @@ var create = function onCreate(req, res, next) {
 		function getOrderDetails(callback) {
 			Order.findOne({ _id: orderId, user: req.user._id }, function onFind(err, order) {
 				if (err) return callback(err);
-				if (!order) return callback(new Error('No orders have been made'));
+				if (!order) return callback(new Error('The order does not exist'));
 				if (order.status === 'paid') return callback(new Error('This order has already been paid'));
 
 				charge.amount = order.amount;
