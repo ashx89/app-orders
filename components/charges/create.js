@@ -42,7 +42,8 @@ var create = function onCreate(req, res, next) {
 					if (err) return callback(err);
 
 					delete charge.source;
-					
+					charge.customer = customerObject.id;
+
 					return callback(null, order);
 				});
 			} else {
