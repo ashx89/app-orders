@@ -15,7 +15,7 @@ var fetch = function onFetch(req, res, next) {
 
 	Account.findOne({ user: req.user._id }, function onFind(err, account) {
 		if (err) return next(err);
-		(cardId) ? cardsApi.fetch(account.customer_id, cardId, onFetchCards) : cardsApi.fetchAll(account.customer_id, onFetchCards);
+		(cardId) ? cardsApi.fetch(account.customer, cardId, onFetchCards) : cardsApi.fetchAll(account.customer, onFetchCards);
 	});
 };
 

@@ -10,12 +10,12 @@ var remove = function onFetch(req, res, next) {
 	Account.findOne({ user: req.user._id }, function onFind(err, account) {
 		if (err) return next(err);
 
-		cardsApi.fetchAll(account.customer_id, function onFetch(err, cards) {
+		cardsApi.fetchAll(account.customer, function onFetch(err, cards) {
 			if (err) return next(err);
 			if (!cards.data.length) return res.status(200).json({});
 			if (cards.data.length === 1) return next(new Error('There is only one card on your account. Cannot remove'));
 
-			cardsApi.delete(account.customer_id, cardId, function onDelete(err, results) {
+			cardsApi.delete(account.customer, cardId, function onDelete(err, results) {
 				if (err) return next(err);
 				return res.status(200).json(results);
 			});
