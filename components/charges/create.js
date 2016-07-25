@@ -3,6 +3,7 @@ var async = require('async');
 var Order = require(global.__orders_base + '/models/order');
 
 var chargesApi = require(global.__orders_base + '/lib/charges');
+var customersApi = require(global.__orders_base + '/lib/customers');
 
 var create = function onCreate(req, res, next) {
 	if (!req.body.orderId) return next(new Error('No Order ID Found'));
@@ -46,7 +47,17 @@ var create = function onCreate(req, res, next) {
 					return callback(null, order, chargeResult);
 				});
 			});
-		}
+		},
+		function saveCardDetailsToUser(order, chargeResult, callback) {
+			if (charge.source) {
+				customersApi.update(order.customer, { default_source: charge.source }, function onUpdate(err, customerObject) {
+					if (err) return callback(err);
+					return callback(null, order, chargeResult);
+				});
+			} else {
+				return callback(null, order, chargeResult);
+			}
+		},
 	], function onComplete(err, order, chargeResult) {
 		if (err) return next(err);
 		return res.status(200).json({ order: order, charge: chargeResult });
