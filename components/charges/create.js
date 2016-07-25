@@ -46,7 +46,7 @@ var create = function onCreate(req, res, next) {
 				return callback(null, order, chargeResult);
 			}
 		},
-		function payOrder(order, callback) {
+		function payOrder(order, chargeResult, callback) {
 			chargesApi.create(charge, function onCreate(err, chargeResult) {
 				if (err) return callback(err);
 
