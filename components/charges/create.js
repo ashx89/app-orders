@@ -36,6 +36,16 @@ var create = function onCreate(req, res, next) {
 
 			return callback(null, order);
 		},
+		function saveCardDetailsToUser(order, chargeResult, callback) {
+			if (charge.source) {
+				customersApi.update(order.customer, { source: charge.source }, function onUpdate(err, customerObject) {
+					if (err) return callback(err);
+					return callback(null, order, chargeResult);
+				});
+			} else {
+				return callback(null, order, chargeResult);
+			}
+		},
 		function payOrder(order, callback) {
 			chargesApi.create(charge, function onCreate(err, chargeResult) {
 				if (err) return callback(err);
@@ -48,16 +58,6 @@ var create = function onCreate(req, res, next) {
 					return callback(null, order, chargeResult);
 				});
 			});
-		},
-		function saveCardDetailsToUser(order, chargeResult, callback) {
-			if (charge.source) {
-				customersApi.update(order.customer, { source: charge.source }, function onUpdate(err, customerObject) {
-					if (err) return callback(err);
-					return callback(null, order, chargeResult);
-				});
-			} else {
-				return callback(null, order, chargeResult);
-			}
 		},
 	], function onComplete(err, order, chargeResult) {
 		if (err) return next(err);
