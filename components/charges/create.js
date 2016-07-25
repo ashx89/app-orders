@@ -40,6 +40,9 @@ var create = function onCreate(req, res, next) {
 			if (charge.source) {
 				customersApi.update(order.customer, { source: charge.source }, function onUpdate(err, customerObject) {
 					if (err) return callback(err);
+
+					delete charge.source;
+					
 					return callback(null, order);
 				});
 			} else {
