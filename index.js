@@ -17,6 +17,13 @@ app.get('/orders/:id', require('./components/orders/fetch'));
 app.post('/orders', require('./components/orders/create'));
 
 /**
+ * Rest:: Charges
+ */
+app.get('/charges', require('./components/charges/fetch'));
+app.get('/charges/:id', require('./components/charges/fetch'));
+app.post('/charges', require('./components/charges/create'));
+
+/**
  * Rest:: Card
  */
 app.get('/cards', require('./components/cards/fetch'));

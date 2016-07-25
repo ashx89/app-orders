@@ -12,6 +12,7 @@ var orderSchema = new mongoose.Schema({
 		type: String,
 		validate: [validator.isEmail, 'Invalid Email']
 	},
+	description: String,
 	shipping_address: {},
 	items: Array,
 	customer: {

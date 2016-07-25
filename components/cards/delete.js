@@ -8,6 +8,8 @@ var remove = function onFetch(req, res, next) {
 	var cardId = req.params.id;
 
 	Account.findOne({ user: req.user._id }, function onFind(err, account) {
+		if (err) return next(err);
+
 		cardsApi.fetchAll(account.customer_id, function onFetch(err, cards) {
 			if (err) return next(err);
 			if (!cards.data.length) return res.status(200).json({});
