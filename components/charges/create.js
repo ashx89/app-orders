@@ -51,7 +51,7 @@ var create = function onCreate(req, res, next) {
 		},
 		function saveCardDetailsToUser(order, chargeResult, callback) {
 			if (charge.source) {
-				customersApi.update(order.customer, { default_source: charge.source }, function onUpdate(err, customerObject) {
+				customersApi.update(order.customer, { source: charge.source }, function onUpdate(err, customerObject) {
 					if (err) return callback(err);
 					return callback(null, order, chargeResult);
 				});
