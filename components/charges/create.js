@@ -16,7 +16,7 @@ var create = function onCreate(req, res, next) {
 			Order.findOne({ _id: orderId, user: req.user._id }, function onFind(err, order) {
 				if (err) return callback(err);
 				if (!order) return callback(new Error('The order does not exist'));
-				if (order.status === 'paid') return callback(new Error('This order has already been paid'));
+				if (order.status === 'completed') return callback(new Error('This order has already been paid'));
 
 				charge.amount = order.amount;
 				charge.currency = order.currency;
@@ -54,7 +54,7 @@ var create = function onCreate(req, res, next) {
 			chargesApi.create(charge, function onCreate(err, chargeResult) {
 				if (err) return callback(err);
 
-				order.status = 'paid';
+				order.status = 'completed';
 				order.charge = chargeResult.id;
 
 				order.save(function onSave(err) {
