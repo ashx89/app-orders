@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var async = require('async');
 
 var User = require(global.__base + '/manager').UserModel;
@@ -78,7 +79,17 @@ var create = function onCreate(req, res, next) {
 					tasks.push(function onEachProductFetch(done) {
 						Product.findOne({ _id: item._id }, function onProductFind(err, product) {
 							if (err) return done(err);
-							return done(null, product.price);
+
+							item.user = product.user;
+							item.title = product.title;
+							item.extra = product.extra;
+							item.price = product.price;
+							item.image = product.image;
+							item.description = product.description;
+
+							item.total = item.price * item.qty;
+
+							return done(null, item);
 						});
 					});
 				})(order.items[i]);
@@ -86,10 +97,10 @@ var create = function onCreate(req, res, next) {
 
 			if (!tasks.length) return callback(new Error('No items added to order'));
 
-			async.parallel(tasks, function onPricesFetchComplete(err, prices) {
+			async.parallel(tasks, function onPricesFetchComplete(err, products) {
 				if (err) return callback(err);
 
-				order.amount = prices.reduce(function onReduce(a, b) { return a + b; }, 0);
+				order.amount = _.pluck(products, 'total').reduce(function onReduce(a, b) { return a + b; }, 0);
 
 				if (process.env.APPLICATION_ORDER_PERCENTAGE_FEE) {
 					order.amount += (process.env.APPLICATION_ORDER_PERCENTAGE_FEE * order.amount) / 100;
