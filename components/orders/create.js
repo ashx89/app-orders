@@ -14,6 +14,7 @@ var customersApi = require(global.__orders_base + '/lib/customers');
 var create = function onCreate(req, res, next) {
 	var order = new Order(req.body);
 
+	order.url = '/orders/' + order._id;
 	order.user = req.user._id;
 	order.name = req.user.fullname;
 	order.email = req.user.email;
