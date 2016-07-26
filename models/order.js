@@ -41,7 +41,8 @@ var orderSchema = new mongoose.Schema({
 		email: String,
 		address: {},
 	},
-	note: String
+	note: String,
+	url: String
 }, {
 	minimize: true,
 	timestamps: true
