@@ -13,7 +13,7 @@ var remove = function onFetch(req, res, next) {
 		cardsApi.fetchAll(account.customer, function onFetch(err, cards) {
 			if (err) return next(err);
 			if (!cards.data.length) return res.status(200).json({});
-			if (cards.data.length === 1) return next(new Error('There is only one card on your account. Cannot remove'));
+			if (cards.data.length === 1) return next(new Error('There must be at least one card on your account'));
 
 			cardsApi.delete(account.customer, cardId, function onDelete(err, results) {
 				if (err) return next(err);
