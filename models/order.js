@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var paginate = require('mongoose-paginate');
 var validator = require('mongoose-validators');
 
 var orderSchema = new mongoose.Schema({
@@ -57,4 +58,15 @@ orderSchema.set('toJSON', {
 	}
 });
 
+/**
+ * Pagination defaults
+ * Add paginate to model
+ */
+paginate.paginate.options = {
+	sort: 'createdAt',
+	lean: true,
+	limit: 10
+};
+
+orderSchema.plugin(paginate);
 module.exports = mongoose.model('Order', orderSchema);
