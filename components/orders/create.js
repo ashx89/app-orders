@@ -16,9 +16,10 @@ var create = function onCreate(req, res, next) {
 	var order = new Order(req.body);
 
 	order.url = '/orders/' + order._id;
-	order.user = req.user._id;
+	order.account = req.user.account;
 	order.name = req.user.fullname;
 	order.email = req.user.email;
+	order.metadata = { user: req.user._id };
 
 	async.waterfall([
 		function getCustomerAccount(callback) {
@@ -77,16 +78,10 @@ var create = function onCreate(req, res, next) {
 			for (var i = 0; i < order.items.length; ++i) {
 				(function loopEachOrderItem(item) {
 					tasks.push(function onEachProductFetch(done) {
-						Product.findOne({ _id: item._id }, function onProductFind(err, product) {
+						Product.findOne({ _id: item._id }).lean().exec(function onProductFind(err, product) {
 							if (err) return done(err);
 
-							item.user = product.user;
-							item.title = product.title;
-							item.extra = product.extra;
-							item.price = product.price;
-							item.image = product.image;
-							item.description = product.description;
-
+							item = _.extend(item, product);
 							item.total = item.price * item.qty;
 
 							return done(null, item);

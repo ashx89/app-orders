@@ -3,7 +3,7 @@ var paginate = require('mongoose-paginate');
 var validator = require('mongoose-validators');
 
 var orderSchema = new mongoose.Schema({
-	user: { type: mongoose.Schema.Types.ObjectId },
+	account: { type: mongoose.Schema.Types.ObjectId },
 	name: {
 		type: String,
 		required: [true, 'Missing Name'],

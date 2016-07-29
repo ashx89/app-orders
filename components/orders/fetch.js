@@ -1,17 +1,11 @@
 var _ = require('underscore');
 
-/**
- * Model
- */
 var Order = require(global.__orders_base + '/models/order');
 
-/**
- * Fetch a meal
- */
 var fetch = function onFetch(req, res, next) {
 	var id = req.params.id;
 
-	var query = { user: req.user._id };
+	var query = { account: req.user.account };
 	query = _.extend(query, req.query);
 
 	if (id) query = _.extend(query, { _id: id });
