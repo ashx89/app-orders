@@ -13,7 +13,7 @@ var create = function onCreate(req, res, next) {
 
 	async.waterfall([
 		function getOrderDetails(callback) {
-			Order.findOne({ _id: orderId, user: req.user._id }, function onFind(err, order) {
+			Order.findOne({ _id: orderId, account: req.user.account }, function onFind(err, order) {
 				if (err) return callback(err);
 				if (!order) return callback(new Error('The order does not exist'));
 				if (order.status === 'completed') return callback(new Error('This order has already been paid'));
