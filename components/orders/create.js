@@ -1,9 +1,9 @@
 var _ = require('underscore');
 var async = require('async');
 
-var User = require(global.__base + '/manager').UserModel;
-var Account = require(global.__base + '/manager').AccountModel;
-var Product = require(global.__base + '/manager').ProductModel;
+var User = require('app-auth').model;
+var Account = require('app-accounts').model;
+var Product = require('app-products').model;
 
 var Order = require(global.__orders_base + '/models/order');
 
@@ -19,7 +19,6 @@ var create = function onCreate(req, res, next) {
 	order.account = req.user.account;
 	order.name = req.user.fullname;
 	order.email = req.user.email;
-	order.metadata = { user: req.user._id };
 
 	async.waterfall([
 		function getCustomerAccount(callback) {
