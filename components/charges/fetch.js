@@ -1,4 +1,4 @@
-var Account = require(global.__base + '/manager').AccountModel;
+var Account = require('app-accounts').model;
 var chargesApi = require(global.__orders_base + '/lib/charges');
 
 /**
